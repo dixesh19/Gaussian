@@ -22,37 +22,58 @@ print the values
 End the program
 ## Program:
 ```
-'''
-Program to solve a matrix using Gaussian elimination without partial pivoting.
+'''Program to solve a matrix using Gaussian elimination without partial pivoting.
 Developed by: DINESH R
 RegisterNumber: 212224240037
 '''
 import numpy as np
-import sys
-n = int(input())
-a = np.zeros((n,n+1))
-x = np.zeros(n)
-for i in range(n):
-    for j in range(n+1):
-        a[i][j]=float(input())
-for i in range(n):
-    if a[i][i]==0.0:
-        sys.exit('Divide by zero detected!')
-    for j in range(i+1,n):
-        ratio = a[j][i]/a[i][i]
-        for k in range(n+1):
-            a[j][k]=a[j][k]-ratio*a[i][k]
-x[n-1] = a[n-1][n]/a[n-1][n-1]
-for i in range(n-2,-1,-1):
-    x[i]= a[i][n]
-    for j in range(i+1,n):
-        x[i]=x[i]-a[i][j]*x[j]
-    x[i]=x[i]/a[i][i]
-for i in range(n):
-    print('X%d = %0.2f'%(i,x[i]),end = ' ')
+
+def gaussian_elimination(matrix):
+    n = int(matrix[0])  # Number of unknowns
+    A = []  # Coefficient matrix
+    b = []  # Constants vector
+
+    # Parse matrix input
+    index = 1
+    for i in range(n):
+        A.append(matrix[index:index + n])
+        b.append(matrix[index + n])
+        index += (n + 1)
+
+    A = np.array(A, dtype=float)
+    b = np.array(b, dtype=float)
+
+    # Forward elimination
+    for k in range(n):
+        for i in range(k + 1, n):
+            factor = A[i, k] / A[k, k]
+            A[i, k:] -= factor * A[k, k:]
+            b[i] -= factor * b[k]
+
+    # Back substitution
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (b[i] - np.dot(A[i, i + 1:], x[i + 1:])) / A[i, i]
+
+    return x
+
+
+# Example input
+input_data = [
+    3,  # Number of unknowns
+    1, 2, 4, 18,   # Row 1: Coefficients and constant
+    2, 12, -2, 9,  # Row 2: Coefficients and constant
+    5, 26, 5, 14   # Row 3: Coefficients and constant
+]
+
+# Solve using Gaussian elimination
+solution = gaussian_elimination(input_data)
+
+# Output the solution in a readable format
+print(f"{' '.join([f'X{i} = {value:.2f}' for i, value in enumerate(solution)])}")
 ```
 ## Output:
-![Screenshot 2023-12-24 224148](https://github.com/gauthamkrishna7/Gaussian/assets/141175025/65410204-497e-430e-a0ed-9313c5e551d8)
+![image](https://github.com/user-attachments/assets/18a9f07a-66ed-4abc-8f6b-097f1b2fc58d)
 ## Result:
 Thus the program to find the solution of a matrix using Gaussian Elimination is written and verified using python programming.
 
